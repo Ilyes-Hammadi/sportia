@@ -1,52 +1,52 @@
-import flask
+from flask import Flask, render_template
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 
 
 # Show all categories
 @app.route('/')
 @app.route('/categories')
 def categories():
-    return 'Show all categories'
+    return render_template('categories.html')
 
 
 # Add new category
 @app.route('/category/new')
 def new_category():
-    return 'Add category'
+    return render_template('new_category.html')
 
 
 # Update category
 @app.route('/category/<int:category_id>/update')
 def update_category(category_id):
-    return 'Update category id : %s' % category_id
+    return render_template('update_category.html')
 
 
 # Delete category
 @app.route('/category/<int:category_id>/delete')
 def delete_category(category_id):
-    return 'Delete category id : %s' % category_id
+    return render_template('delete_category.html')
 
 
 # Show one sport
 @app.route('/category/<int:category_id>/sport/<int:sport_id>')
 def show_sport(category_id, sport_id):
-    return 'Show sport id %s category %s' % (sport_id, category_id)
+    return render_template('show_sport.html')
 
 
 # New Sport
 @app.route('/sport/new')
 def new_sport():
-    return 'New Sport'
+    return render_template('new_sport.html')
 
 
 # Update Sport
 @app.route('/category/<int:category_id>/sport/<int:sport_id>/update')
 def update_sport(category_id, sport_id):
-    return 'Update sport id %s category %s' % (sport_id, category_id)
+    return render_template('update_sport.html')
 
 
 # Delete Sport
 @app.route('/category/<int:category_id>/sport/<int:sport_id>/delete')
 def delte_sport(category_id, sport_id):
-    return 'Delete sport id %s category %s' % (sport_id, category_id)
+    return render_template('delete_sport.html')
