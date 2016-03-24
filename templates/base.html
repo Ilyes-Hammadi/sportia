@@ -3,11 +3,29 @@
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
+
+
+        <link rel="stylesheet"
+              href="{{ url_for('static', filename='bower_components/Materialize/dist/css/materialize.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     </head>
     <body>
-        {% block content %}
 
-        {% endblock %}
+        <nav>
+            <div class="nav-wrapper container">
+                <a href="{{ url_for('categories') }}" class="brand-logo">Sportia</a>
+            </div>
+        </nav>
+        <div class="container">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+
+
+        <script href="{{ url_for('static', filename='bower_components/jquery/dist/jquery.js') }}"></script>
+        <script href="{{ url_for('static', filename='bower_components/Materialize/dist/js/materialize.js') }}"></script>
+        <script href="{{ url_for('static', filename='js/app.js') }}"></script>
+
     </body>
 </html>

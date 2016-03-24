@@ -64,3 +64,6 @@ target/
 
 # Bower files
 static/bower_components/
+
+sportia
+*.db
