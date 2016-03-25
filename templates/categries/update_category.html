@@ -2,4 +2,25 @@
 {% block content %}
 <h1>Update Category</h1>
 
+
+<div class="row">
+    <form class="col s12" method="POST" action="{{ url_for('update_category', category_id=category.id) }}">
+        <div class="row">
+            <div class="input-field col s12">
+                <input id="name" name="name" type="text" class="validate" placeholder="Name"
+                       value="{{ category.name }}">
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <textarea id="description" name="description" class="materialize-textarea"
+                              placeholder="Description">{{ category.description }}</textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn">Create</button>
+            <a href="{{ url_for('categories') }}" class="btn">Disscard</a>
+        </div>
+    </form>
+</div>
+
+
 {% endblock %}

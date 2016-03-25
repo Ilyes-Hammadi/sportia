@@ -2,4 +2,48 @@
 {% block content %}
 <h1>Update Sport</h1>
 
+<div class="row">
+    <div class="col s12 m8 l5">
+        <form action="{{ url_for('update_sport', category_id=sport.category_id, sport_id=sport.id) }}" method="POST">
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="name" name="name" type="text" class="validate" value="{{ sport.name }}">
+                    <label class="active" for="name">Sport Name</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <select id="category_id" name="category_id" class="input-field">
+                        {% for cat in categories%}
+                        <option value="{{ cat.id }}" {% if cat.id== sport.category_id %}selected {% endif %}>{{ cat.name
+                            }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <label>Category</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <textarea id="description" name="description" class="materialize-textarea"></textarea>
+                    <label for="description">Description</label>
+                </div>
+            </div>
+
+
+            <button class="btn" type="submit">Create Sport</button>
+
+        </form>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+        $('select').material_select();
+    });
+</script>
+
+
 {% endblock %}
