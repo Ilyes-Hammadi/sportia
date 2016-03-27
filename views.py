@@ -19,9 +19,9 @@ from sqlalchemy.orm import sessionmaker
 
 from models import Base, Category, Sport, User
 
-"""
---------------------------------------------------- SETUP -------------------------------------------------------------
-"""
+#
+# --------------------------------------------------- SETUP -------------------------------------------------------------
+#
 
 app = Flask(__name__)
 
@@ -36,9 +36,10 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-"""
-------------------------------------------------- HELPER METHODS ------------------------------------------------------
-"""
+
+#
+# ------------------------------------------------- HELPER METHODS ------------------------------------------------------
+#
 
 
 def json_responce(message, code):
@@ -68,14 +69,15 @@ def get_user_id(email):
         return None
 
 
-"""
------------------------------------------------------- VIEWS ----------------------------------------------------------
-"""
+#
+# ------------------------------------------------------ VIEWS ----------------------------------------------------------
+#
 
 
-# Create anti-forgery state token
 @app.route('/login')
 def login():
+    """Create anti-forgery state token"""
+
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -83,9 +85,10 @@ def login():
     return render_template('user/login.html', login_session=login_session, STATE=state)
 
 
-# Logout
 @app.route('/logout')
 def logout():
+    """This function logout the user acording to the intial login google+ or facebook"""
+
     if login_session['provider'] == "google":
         return redirect(url_for('gdisconnect'))
     elif login_session['provider'] == "facebook":
@@ -94,6 +97,8 @@ def logout():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """ Google plus connection """
+
     # Validate state token
     if request.args.get('state') != login_session['state']:
         return json_responce('Invalid state parameter.', 401)
@@ -171,11 +176,11 @@ def gconnect():
     print "done!"
     return output
 
-    # DISCONNECT - Revoke a current user's token and reset their login_session
-
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    """ Google plus disconnection """
+
     print login_session
 
     access_token = login_session['access_token']
@@ -213,6 +218,8 @@ def gdisconnect():
 
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
+    """ Facebook connection """
+
     if request.args.get('state') != login_session['state']:
         return json_responce('Invalid state parameter.', 401)
 
@@ -279,6 +286,8 @@ def fbconnect():
 
 @app.route('/fbdisconnect')
 def fbdisconnect():
+    """ Facebook disconnection """
+
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
@@ -297,11 +306,12 @@ def fbdisconnect():
     return redirect(url_for('categories'))
 
 
-# Show all categories
 @app.route('/')
 @app.route('/categories')
 @app.route('/categories/<int:category_id>')
 def categories(category_id=None):
+    """ Show all the categories according to the category id """
+
     # Get all the categories and sports from the database
     categories = session.query(Category).all()
     if category_id:
@@ -316,9 +326,10 @@ def categories(category_id=None):
                            sports=sports, category_id=category_id)
 
 
-# Add new category
 @app.route('/category/new', methods=['GET', 'POST'])
 def new_category():
+    """ Add new category """
+
     # Check if the user is loged in
     if 'username' not in login_session:
         return redirect('/login')
@@ -344,9 +355,10 @@ def new_category():
     return render_template('categories/new_category.html')
 
 
-# Update category
 @app.route('/category/<int:category_id>/update', methods=['GET', 'POST'])
 def update_category(category_id):
+    """ Update category """
+
     # Check if the user is loged in
     if 'username' not in login_session:
         return redirect('/login')
@@ -387,9 +399,10 @@ def update_category(category_id):
         pass
 
 
-# Delete category
 @app.route('/category/<int:category_id>/delete', methods=['GET', 'POST'])
 def delete_category(category_id):
+    """ Delete category """
+
     # Check if the user is loged in
     if 'username' not in login_session:
         return redirect('/login')
@@ -427,9 +440,10 @@ def delete_category(category_id):
         return render_template('categories/delete_category.html', category=category)
 
 
-# Show one sport
 @app.route('/category/<int:category_id>/sport/<int:sport_id>')
 def show_sport(category_id, sport_id):
+    """ Show one sport """
+
     sport = None
     try:
         sport = session.query(Sport).get(sport_id)
@@ -439,9 +453,10 @@ def show_sport(category_id, sport_id):
     return render_template('sport/show_sport.html', login_session=login_session, sport=sport)
 
 
-# New Sport
 @app.route('/sport/new/', methods=['GET', 'POST'])
 def new_sport():
+    """ New Sport """
+
     # Check if the user is loged in
     if 'username' not in login_session:
         return redirect('/login')
@@ -474,9 +489,10 @@ def new_sport():
         return render_template('sport/new_sport.html', categories=categories)
 
 
-# Update Sport
 @app.route('/category/<int:category_id>/sport/<int:sport_id>/update', methods=['GET', 'POST'])
 def update_sport(category_id, sport_id):
+    """ Update Sport """
+
     # Check if the user is loged in
     if 'username' not in login_session:
         return redirect('/login')
@@ -522,9 +538,10 @@ def update_sport(category_id, sport_id):
         return render_template('sport/update_sport.html', sport=sport, categories=categories)
 
 
-# Delete Sport
 @app.route('/category/<int:category_id>/sport/<int:sport_id>/delete', methods=['GET', 'POST'])
 def delete_sport(category_id, sport_id):
+    """ Delete Sport """
+
     # Check if the user is loged in
     if 'username' not in login_session:
         return redirect('/login')
@@ -546,41 +563,50 @@ def delete_sport(category_id, sport_id):
         flash('Item deleted')
         return redirect(url_for('categories'))
 
-
     return render_template('sport/delete_sport.html', sport=sport)
 
 
-"""
--------------------------------------------------- API ENDPOINT -------------------------------------------------------
-"""
+#
+# -------------------------------------------------- API ENDPOINT -------------------------------------------------------
+#
 
 
 @app.route('/api/users')
 def users_json():
+    """ Return the all the users data in json format """
+
     users = session.query(User).all()
     return jsonify(users=[user.serialize for user in users])
 
 
 @app.route('/api/categories')
 def categories_json():
+    """ Return all the categories data in json format """
+
     categories = session.query(Category).all()
     return jsonify(categories=[category.serialize for category in categories])
 
 
 @app.route('/api/sports')
 def sports_json():
+    """ Return all the sports data in json format """
+
     sports = session.query(Sport).all()
     return jsonify(sports=[sport.serialize for sport in sports])
 
 
 @app.route('/api/user/<int:user_id>')
 def user_json(user_id):
+    """ Return user data in json format accordin to the user_id param"""
+
     user = session.query(User).get(user_id)
     return jsonify(user.serialize)
 
 
 @app.route('/api/category/<int:category_id>')
 def category_json(category_id):
+    """ Return category data in json format accordin to the category_id param"""
+
     try:
         category = session.query(Category).get(category_id)
         return jsonify(category.serialize)
@@ -590,6 +616,8 @@ def category_json(category_id):
 
 @app.route('/api/sport/<int:sport_id>')
 def sport_api(sport_id):
+    """ Return sport data in json format accordin to the sport_id param"""
+
     try:
         sport = session.query(Sport).get(sport_id)
         return jsonify(sport.serialize)

@@ -1,6 +1,6 @@
-"""
---------------------- SETUP FAKE DATA --------------------
-"""
+#
+#--------------------- SETUP FAKE DATA --------------------
+#
 
 # Setup the database with some fake data
 import json
