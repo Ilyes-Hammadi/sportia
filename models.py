@@ -49,7 +49,8 @@ class Category(Base):
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'created_at': self.created.__str__()
+            'created_at': self.created.__str__(),
+            'user' : self.user.serialize
         }
 
 
@@ -75,7 +76,8 @@ class Sport(Base):
             'name': self.name,
             'description': self.description,
             'category': self.category.serialize,
-            'created_at': self.created.__str__()
+            'created_at': self.created.__str__(),
+            'user' : self.user.serialize
         }
 
 
