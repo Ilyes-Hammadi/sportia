@@ -15,14 +15,19 @@
         <div class="row">
 
             {% for sport in sports %}
-            <div class="col ss6 m4">
-                <div class="card">
-                    <div class="card-image waves-effect waves-light"
-                         onclick="window.location.replace('/category/{{sport.category_id}}/sport/{{sport.id}}')">
-                        <img src="{{ url_for('static', filename='img/foot.jpg') }}">
-                        <span class="card-title">{{ sport.name }}</span>
+            <div class="col s6 m4">
+                <div class="card blue-grey darken-1">
+                    <div class="card-content white-text">
+                        <img src="{{ sport.user.picture }}" alt="" class="circle" height="36">
+                        <span class="title">{{ sport.user.name }}</span>
+                        <br>
+                        <span class="card-title"><a
+                                href="{{ url_for('show_sport', category_id=sport.category_id, sport_id=sport.id) }}">{{
+                            sport.name }}</a></span>
+                        <p>{{ sport.description|truncate(15)}}</p>
                     </div>
                 </div>
+
             </div>
             {% endfor %}
         </div>

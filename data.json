@@ -1,0 +1,56 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Swimming",
+      "description": "Swimming is an individual or team sport and activity. Competitive swimming is one of the most popular Olympic sports, with events in freestyle, backstroke, breaststroke, and butterfly. In addition to these individual events, Olympic swimmers also participate in relays."
+    },
+    {
+      "id": 2,
+      "name": "Racing",
+      "description": "In sport, racing is a competition of speed, against an objective criterion, usually a clock or to a specific point. The competitors in a race try to complete a given task in the shortest amount of time. Typically this involves traversing some distance, but it can be any other task involving speed to reach a specific goal."
+    },
+    {
+      "id": 3,
+      "name": "Olympic sports",
+      "description": "Olympic sports are sports contested in the Summer and Winter Olympic Games. The 2012 Summer Olympics included 26 sports, with two additional sports due to be added to the 2016 Summer Olympics. The 2014 Winter Olympics included seven sports. The number and kinds of events may change slightly from one Olympiad to another. Each Olympic sport is represented by an international governing body"
+    }
+  ],
+  "sports": [
+    {
+      "name": "Open water",
+      "description": "In open water swimming, where the events are swum in a body of open water (lake or sea), there are also 5 km, 10 km and 25 km events for men and women. However, only the 10 km event is included in the Olympic schedule, again for both men and women. Open-water competitions are typically separate to other swimming competitions with the exception of the World Championships and the Olympics.",
+      "category_id": 1
+    },
+    {
+      "name": "Butterfly stroke",
+      "description": "The butterfly (colloquially among swimmers known as fly) is a swimming stroke swum on the breast, with both arms moving simultaneously, accompanied by the butterfly kick (also known as the 'dolphin kick'). While other styles like the breaststroke, front crawl, or backstroke can be swum adequately by beginners, the butterfly is a more difficult stroke that requires good technique as well as strong muscles. It is the newest swimming style swum in competition, first swum in 1933 and originating out of breaststroke",
+      "category_id": 1
+    },
+    {
+      "name": "Backstroke",
+      "description": "Backstroke is one of the four swimming styles regulated by FINA, and the only regulated style swum on the back. This has the advantage of easy breathing, but the disadvantage of swimmers not being able to see where they are going. It is also the only competition swimming style that has a different start. The swimming style is similar to an upside down front crawl. Both backstroke and front crawl are long-axis strokes. In Individual medley backstroke is the second style swum; in the team medley it is the first style swum.",
+      "category_id": 1
+    },
+    {
+      "name": "Sports car racing",
+      "description": "Sports car racing is a form of circuit auto racing with sports cars that have two seats and enclosed wheels. They may be purpose-built (Prototype) or related to road-going models (Grand Touring).",
+      "category_id": 2
+    },
+    {
+      "name": "Motorcycle racing",
+      "description": "Motorcycle racing (also called moto racing and bike racing) is the motorcycle sport of racing motorcycles. Major genres include road racing and off road racing, both either on circuits or open courses, and track racing. Other categories include hill climbs, drag racing and land speed record trials.",
+      "category_id": 2
+    },
+    {
+      "name": "Archery at the Summer Olympics",
+      "description": "Archery had its debut at the 1900 Summer Olympics and has been contested in 14 Olympiads. Eighty-four nations have competed in the Olympic archery events, with France appearing the most often at 31 times. The most noticeable trend has been the dominance of the Korean women archers, who have won 14 out of 15 gold medals in the women's events since 1984. ",
+      "category_id": 3
+    },
+    {
+      "name": "Athletics at the Summer Olympics",
+      "description": "Athletics has been contested at every Summer Olympics since the birth of the modern Olympic movement at the 1896 Summer Olympics. The athletics program traces its earliest roots to events used in the ancient Greek Olympics. The modern program includes track and field events, road running events, and racewalking events. Cross country running was also on the program in earlier editions but it was dropped after the 1924 Summer Olympics.",
+      "category_id": 3
+    }
+  ]
+}

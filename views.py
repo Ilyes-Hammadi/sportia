@@ -1,3 +1,8 @@
+"""
+    CODE HONOR
+    this code is inspired by the Full Stack Foundations course so thanx udacity :)
+"""
+
 import json
 import random
 import string
@@ -12,7 +17,11 @@ from oauth2client.client import flow_from_clientsecrets
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import Base, Category, Sport
+from models import Base, Category, Sport, User
+
+"""
+--------------------------------------------------- SETUP -------------------------------------------------------------
+"""
 
 app = Flask(__name__)
 
@@ -27,11 +36,41 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+"""
+------------------------------------------------- HELPER METHODS ------------------------------------------------------
+"""
+
 
 def json_responce(message, code):
     response = make_response(json.dumps(message, code))
     response.headers['Content-Type'] = 'application/json'
     return response
+
+
+def create_user(login_session):
+    user = User(name=login_session['username'], email=login_session['email'], picture=login_session['picture'])
+    session.add(user)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def get_user_info(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def get_user_id(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
+
+"""
+------------------------------------------------------ VIEWS ----------------------------------------------------------
+"""
 
 
 # Create anti-forgery state token
@@ -99,8 +138,6 @@ def gconnect():
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
-    print login_session
-
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
@@ -113,18 +150,15 @@ def gconnect():
     login_session['email'] = data['email']
     login_session['provider'] = 'google'
 
-    # # Get the user id if does exist
-    # user_id = get_user_id(login_session['email'])
-    #
-    # # If user does not exist create new one
-    # if not user_id:
-    #     user_id = create_user(login_session)
-    #
-    # # Store the user id in the login session so that it can be user later
-    # login_session['user_id'] = user_id
+    # Get the user id if does exist
+    user_id = get_user_id(login_session['email'])
 
-    print '----------------- Login Session ---------------'
-    print login_session
+    # If user does not exist create new one
+    if not user_id:
+        user_id = create_user(login_session)
+
+    # Store the user id in the login session so that it can be user later
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
@@ -202,6 +236,7 @@ def fbconnect():
     url = 'https://graph.facebook.com/v2.4/me?%s&fields=name,id,email' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
+
     # print "url sent for API access:%s"% url
     # print "API JSON result: %s" % result
     data = json.loads(result)
@@ -210,7 +245,8 @@ def fbconnect():
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+    # The token must be stored in the login_session in order to properly
+    #  logout, let's strip out the information before the equals sign in our token
     stored_token = token.split("=")[1]
     login_session['access_token'] = stored_token
 
@@ -222,11 +258,11 @@ def fbconnect():
 
     login_session['picture'] = data["data"]["url"]
 
-    # # see if user exists
-    # user_id = getUserID(login_session['email'])
-    # if not user_id:
-    #     user_id = createUser(login_session)
-    # login_session['user_id'] = user_id
+    # see if user exists
+    user_id = get_user_id(login_session['email'])
+    if not user_id:
+        user_id = create_user(login_session)
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
@@ -276,13 +312,17 @@ def categories(category_id=None):
     else:
         sports = session.query(Sport).all()
 
-    return render_template('categries/categories.html', login_session=login_session, categories=categories,
+    return render_template('categories/categories.html', login_session=login_session, categories=categories,
                            sports=sports)
 
 
 # Add new category
 @app.route('/category/new', methods=['GET', 'POST'])
 def new_category():
+    # Check if the user is loged in
+    if 'username' not in login_session:
+        return redirect('/login')
+
     if request.method == 'POST':
 
         # Get data from the front-end
@@ -290,7 +330,7 @@ def new_category():
         description = request.form['description']
 
         # Put the data into a model
-        category = Category(name=name)
+        category = Category(name=name, user_id=login_session['user_id'])
 
         # Save description if there are one
         if description:
@@ -301,41 +341,90 @@ def new_category():
 
         return redirect(url_for('categories'))
 
-    return render_template('categries/new_category.html')
+    return render_template('categories/new_category.html')
 
 
 # Update category
 @app.route('/category/<int:category_id>/update', methods=['GET', 'POST'])
 def update_category(category_id):
-    # Get the category with the id
-    category = session.query(Category).get(category_id)
+    # Check if the user is loged in
+    if 'username' not in login_session:
+        return redirect('/login')
 
-    # if it's a POST request
-    if request.method == 'POST':
-        category.name = request.form['name']
+    try:
+        # Get the category with the id
+        category = session.query(Category).get(category_id)
 
-        # if there a description
-        if request.form['description']:
-            category.description = request.form['description']
+        # If the item was not found redirect to the home page
+        if category == None:
+            flash('Item does not exist')
+            return redirect(url_for('categories'))
 
-        # save the changes into the database
-        session.add(category)
-        session.commit()
+        # Check to see if the loged user is the owner of the item
+        if login_session['user_id'] != category.user_id:
+            flash("Your are not the owner of this item")
+            return redirect(url_for('categories'))
 
-        # redirect the user to the categories page
-        return redirect(url_for('categories'))
+        # if it's a POST request
+        if request.method == 'POST':
+            category.name = request.form['name']
 
-    else:
-        return render_template('categries/update_category.html', category=category)
+            # if there a description
+            if request.form['description']:
+                category.description = request.form['description']
+
+            # save the changes into the database
+            session.add(category)
+            session.commit()
+
+            # redirect the user to the categories page
+            return redirect(url_for('categories'))
+
+        else:
+            return render_template('categories/update_category.html', category=category)
+
+    except:
+        pass
 
 
 # Delete category
-@app.route('/category/<int:category_id>/delete')
+@app.route('/category/<int:category_id>/delete', methods=['GET', 'POST'])
 def delete_category(category_id):
+    # Check if the user is loged in
+    if 'username' not in login_session:
+        return redirect('/login')
+
     category = session.query(Category).get(category_id)
-    session.delete(category)
-    session.commit()
-    return render_template('categries/delete_category.html')
+
+    # If the item was not found redirect to the home page
+    if category == None:
+        flash('Item does not exist')
+        return redirect(url_for('categories'))
+
+    # Check to see if the loged user is the owner of the item
+    if login_session['user_id'] != category.user_id:
+        flash("Your are not the owner of this item")
+        return redirect(url_for('categories'))
+
+    if request.method == 'POST':
+
+        # Delete all the related items with the acctual category
+        sports = session.query(Sport).filter_by(category_id=category.id)
+
+        # Delete one by one
+        for sport in sports:
+            session.delete(sport)
+
+        # Delete the category
+        session.delete(category)
+
+        # Commit all the changes
+        session.commit()
+
+        flash('Category deleted')
+        return redirect(url_for('categories'))
+    else:
+        return render_template('categories/delete_category.html', category=category)
 
 
 # Show one sport
@@ -345,13 +434,17 @@ def show_sport(category_id, sport_id):
     try:
         sport = session.query(Sport).get(sport_id)
     except:
-        pass
-    return render_template('sport/show_sport.html', sport=sport)
+        flash('This item does not exist')
+        return redirect(url_for('categories'))
+    return render_template('sport/show_sport.html', login_session=login_session, sport=sport)
 
 
 # New Sport
 @app.route('/sport/new/', methods=['GET', 'POST'])
 def new_sport():
+    # Check if the user is loged in
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         # Get the data from the request
         name = request.form['name']
@@ -359,7 +452,7 @@ def new_sport():
         category_id = request.form['category_id']
 
         # Put the data into a model
-        sport = Sport(name=name, category_id=category_id)
+        sport = Sport(name=name, category_id=category_id, user_id=login_session['user_id'])
 
         # if there are any description
         if description:
@@ -370,19 +463,40 @@ def new_sport():
 
         return redirect(url_for('categories', category_id=category_id))
     else:
+        # Check to see if there any categories in the database ohter wise we redirect the user
+        # to create the first category
         categories = session.query(Category).all()
+
+        if len(categories) == 0:
+            flash('There no categoris create the first one please')
+            return redirect(url_for('new_category'))
+
         return render_template('sport/new_sport.html', categories=categories)
 
 
 # Update Sport
 @app.route('/category/<int:category_id>/sport/<int:sport_id>/update', methods=['GET', 'POST'])
 def update_sport(category_id, sport_id):
+    # Check if the user is loged in
+    if 'username' not in login_session:
+        return redirect('/login')
+
     sport = None
     # Get the sport item from the database if it's exist
     try:
         sport = session.query(Sport).get(sport_id)
+
+        # If the item was not found redirect to the home page
+        if sport == None:
+            flash('Item does not exist')
+            return redirect(url_for('categories'))
     except:
         pass
+
+    # Check to see if the loged user is the owner of the item
+    if login_session['user_id'] != sport.user_id:
+        flash("Your are not the owner of this item")
+        return redirect(url_for('categories'))
 
     # If the request is a POST request validate and save the data
     if request.method == 'POST':
@@ -409,16 +523,42 @@ def update_sport(category_id, sport_id):
 
 
 # Delete Sport
-@app.route('/category/<int:category_id>/sport/<int:sport_id>/delete')
-def delte_sport(category_id, sport_id):
-    try:
-        sport = session.query(Sport).get(sport_id)
+@app.route('/category/<int:category_id>/sport/<int:sport_id>/delete', methods=['GET', 'POST'])
+def delete_sport(category_id, sport_id):
+    # Check if the user is loged in
+    if 'username' not in login_session:
+        return redirect('/login')
+
+    sport = session.query(Sport).get(sport_id)
+    # If there no items redirect to the home page
+    if sport == None:
+        flash('This item does not exist')
+        return redirect(url_for('categories'))
+
+    # Check to see if the loged user is the owner of the item
+    if login_session['user_id'] != sport.user_id:
+        flash("Your are not the owner of this item")
+        return redirect(url_for('categories'))
+
+    if request.method == 'POST':
         session.delete(sport)
         session.commit()
-    except:
-        pass
+        flash('Item deleted')
+        return redirect(url_for('categories'))
 
-    return render_template('sport/delete_sport.html')
+
+    return render_template('sport/delete_sport.html', sport=sport)
+
+
+"""
+-------------------------------------------------- API ENDPOINT -------------------------------------------------------
+"""
+
+
+@app.route('/api/users')
+def users_json():
+    users = session.query(User).all()
+    return jsonify(users=[user.serialize for user in users])
 
 
 @app.route('/api/categories')
@@ -431,6 +571,12 @@ def categories_json():
 def sports_json():
     sports = session.query(Sport).all()
     return jsonify(sports=[sport.serialize for sport in sports])
+
+
+@app.route('/api/user/<int:user_id>')
+def user_json(user_id):
+    user = session.query(User).get(user_id)
+    return jsonify(user.serialize)
 
 
 @app.route('/api/category/<int:category_id>')
