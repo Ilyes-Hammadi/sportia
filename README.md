@@ -27,6 +27,8 @@ developer platform
 [Facebook Api] (https://developers.facebook.com/apps/)<br>
 [Google+ Api] (https://console.cloud.google.com/) 
 
+After you get your credentails from the google+ and facebook api, replace the `CLIENT_ID (APP_ID for facebook)` and `CLIENT_SECRET (APP_SECRET for facebook)` 
+that are in the google_client_secrets.json and fb_client_secrets.json and the templates/user/login.html files with your data.
 
 ###Verify that these files and folders exist in the newly cloned repository:###<br>
     
