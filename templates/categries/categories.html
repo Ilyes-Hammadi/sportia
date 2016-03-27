@@ -2,23 +2,34 @@
 {% block content %}
 <div class="row">
     <div class="col s2 m2 l2">
-        <h5>Categories</h5>
 
-        <ul>
-            <li><a href="{{ url_for('categories') }}">All</a></li>
+        <div class="collection">
+            <a class="collection-item" href="{{ url_for('categories') }}">All</a>
             {% for cat in categories %}
-            <li><a href="{{ url_for('categories', category_id=cat.id) }}">{{ cat.name }}</a></li>
+            <a class="collection-item" href="{{ url_for('categories', category_id=cat.id) }}">{{ cat.name }}</a>
             {% endfor %}
-        </ul>
+        </div>
+
     </div>
     <div class="col s10 m10 l10">
-        <ul>
+        <div class="row">
+
             {% for sport in sports %}
-            <li><a href="{{ url_for('show_sport', category_id=sport.category_id, sport_id=sport.id) }}">{{ sport.name }}</a></li>
+            <div class="col ss6 m4">
+                <div class="card">
+                    <div class="card-image waves-effect waves-light"
+                         onclick="window.location.replace('/category/{{sport.category_id}}/sport/{{sport.id}}')">
+                        <img src="{{ url_for('static', filename='img/foot.jpg') }}">
+                        <span class="card-title">{{ sport.name }}</span>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
+
     </div>
 </div>
+<!-- Floating Action Button -->
 <div class="fixed-action-btn vertical" style="bottom: 45px; right: 24px;">
     <a class="btn-floating btn-large red">
         <i class="large material-icons">add</i>

@@ -1,7 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ sport.name }}</h1>
-<p>{{ sport.detail }}</p>
-<p>{{ sport.created}}</p>
+<div class="row">
+    <div class="col s12 m7">
+        <div class="card">
+            <div class="card-image">
+                <img src="{{ url_for('static', filename='img/foot.jpg') }}" alt="">
+                <span class="card-title">{{ sport.name }}</span>
+            </div>
+            <div class="card-content">
+                <p>{{ sport.description }}</p>
+            </div>
+            <div class="card-action">
+                <a class="btn" href="#">Update</a>
+                <a class="btn red" href="">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}

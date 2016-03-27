@@ -14,6 +14,15 @@ class Category(Base):
     description = Column(String(250))
     created = Column(DateTime, default=func.now())
 
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'created_at': self.created.__str__()
+        }
+
 
 class Sport(Base):
     __tablename__ = 'sport'
@@ -26,6 +35,16 @@ class Sport(Base):
 
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'category': self.category.serialize,
+            'created_at': self.created.__str__()
+        }
 
 
 engine = create_engine('sqlite:///sportia.db')

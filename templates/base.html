@@ -19,9 +19,33 @@
         <nav>
             <div class="nav-wrapper container">
                 <a href="{{ url_for('categories') }}" class="brand-logo">Sportia</a>
+                <ul class="nav-mobile right">
+                    {% if 'username' in login_session %}
+                    <li>{{login_session['username']}}</li>
+                    <li><img id="profile-picture" class="circle" src="{{login_session['picture']}}" alt="" height="48">
+                    </li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% endif %}
+
+                </ul>
             </div>
         </nav>
         <div class="container">
+            <div class='flash'>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+
+                <ul>
+                    {% for message in messages %}
+                    <li><strong> {{ message }} </strong></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+
+            </div>
             {% block content %}
 
             {% endblock %}
