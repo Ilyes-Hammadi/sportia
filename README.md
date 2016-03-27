@@ -56,6 +56,14 @@ that are in the google_client_secrets.json and fb_client_secrets.json and the te
 	$ vagrant up   #to launch and provision the vagrant environment
 	$ vagrant ssh  #to login to your vagrant environment
 
+###Install the python requirements###
+
+    $ sudo apt-get install python python-pip    #install python and pip
+    $ virtualenv env                            #create a virtual environment
+    $ source env/bin/activate                   #activate the virtual environment
+    $ pip install -r requirements.txt         #install the necessary python libraries
+    
+
 ###Initialize the database###
     
     $ python models.py      #to create the database
