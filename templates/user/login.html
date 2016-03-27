@@ -4,6 +4,8 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
 </script>
 
+<!-- CODE HONOR: the folowing code was taken from the Full Stack Foundations course -->
+
 <script src="//apis.google.com/js/platform.js?onload=start"></script>
 
 <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
@@ -12,7 +14,7 @@
 <div id="signInButton">
           <span class="g-signin"
                 data-scope="openid email"
-                data-clientid="168245523413-vpgcdlnknjtkego85ghusqhu2q197si0.apps.googleusercontent.com"
+                data-clientid="CLIENT_ID"
                 data-redirecturi="postmessage"
                 data-accesstype="offline"
                 data-cookiepolicy="single_host_origin"
@@ -60,7 +62,7 @@
 <script>
     window.fbAsyncInit = function () {
         FB.init({
-            appId: '1591598577826757',
+            appId: 'APP_ID',
             cookie: true,  // enable cookies to allow the server to access
                            // the session
             xfbml: true,  // parse social plugins on this page

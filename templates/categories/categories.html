@@ -4,9 +4,10 @@
     <div class="col s2 m2 l2">
 
         <div class="collection">
-            <a class="collection-item" href="{{ url_for('categories') }}">All</a>
+            <a class="collection-item {% if category_id == None %} active {% endif %} " href="{{ url_for('categories') }}">All</a>
             {% for cat in categories %}
-            <a class="collection-item" href="{{ url_for('categories', category_id=cat.id) }}">{{ cat.name }}</a>
+            <a class="collection-item {% if category_id == cat.id %}active {% endif %}"
+               href="{{ url_for('categories', category_id=cat.id) }}">{{ cat.name }}</a>
             {% endfor %}
         </div>
 
