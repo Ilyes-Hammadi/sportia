@@ -14,7 +14,7 @@
 <div id="signInButton">
           <span class="g-signin"
                 data-scope="openid email"
-                data-clientid="CLIENT_ID"
+                data-clientid="{{ config['google_plus']['web']['client_id'] }}"
                 data-redirecturi="postmessage"
                 data-accesstype="offline"
                 data-cookiepolicy="single_host_origin"
@@ -62,7 +62,7 @@
 <script>
     window.fbAsyncInit = function () {
         FB.init({
-            appId: 'APP_ID',
+            appId: '{{ config['facebook']['web']['app_id'] }}',
             cookie: true,  // enable cookies to allow the server to access
                            // the session
             xfbml: true,  // parse social plugins on this page

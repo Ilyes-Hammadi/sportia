@@ -22,6 +22,7 @@ from models import Base, Category, Sport, User
 #
 # --------------------------------------------------- SETUP -------------------------------------------------------------
 #
+from setup import api_config
 
 app = Flask(__name__)
 
@@ -82,7 +83,10 @@ def login():
                     for x in xrange(32))
     login_session['state'] = state
     # return "The current session state is %s" % login_session['state']
-    return render_template('user/login.html', login_session=login_session, STATE=state)
+
+    config = api_config()
+
+    return render_template('user/login.html', login_session=login_session, STATE=state, config=config)
 
 
 @app.route('/logout')

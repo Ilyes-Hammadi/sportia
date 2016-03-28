@@ -20,15 +20,7 @@ Once you are sure that VirtualBox and Vagrant are installed correctly execute th
 	$ git clone https://github.com/Ilyes-Hammadi/sportia
 	$ cd sportia
 
-###Setup OAuth###
-In order to let users signin with google plus and facebook you have to authenticate your app in the google and facebook
-developer platform
 
-[Facebook Api] (https://developers.facebook.com/apps/)<br>
-[Google+ Api] (https://console.cloud.google.com/) 
-
-After you get your credentails from the google+ and facebook api, replace the `CLIENT_ID (APP_ID for facebook)` and `CLIENT_SECRET (APP_SECRET for facebook)` 
-that are in the google_client_secrets.json and fb_client_secrets.json and the templates/user/login.html files with your data.
 
 ###Verify that these files and folders exist in the newly cloned repository:###<br>
     
@@ -63,6 +55,28 @@ that are in the google_client_secrets.json and fb_client_secrets.json and the te
     $ source env/bin/activate                   #activate the virtual environment
     $ pip install -r requirements.txt         #install the necessary python libraries
     
+###Setup OAuth###
+In order to let users signin with google plus and facebook you have to authenticate your app in the google and facebook
+developer platform
+
+[Facebook Api] (https://developers.facebook.com/apps/)<br>
+[Google+ Api] (https://console.cloud.google.com/) 
+
+After you get your credentails from the google+ and facebook api run :
+    
+    $ python setup.py
+
+And insert your information using the menu 
+    
+    ------------------- Welcome to Sportia Api Setup ----------------------
+    1. Google+ Api
+    2. Facebook Api
+    99. Exit
+    Your Choice (ex: 1): 1
+    ----------------------Google Plus Api ---------------------------------
+    Enter the Client ID: xxxxxxxxxxxxxxxxxxxxxxxxxxx
+    Enter the Project ID: xxxxxxxxxxxxxxxxxxxxxxx
+    Enter the Client Secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ###Initialize the database###
     
